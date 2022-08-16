@@ -19,3 +19,4 @@ cd /var/www/html/web && php artisan migrate
 
 # Start nginx foreground
 nginx -g 'daemon off;'
+
