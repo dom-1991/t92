@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-yarn enforce-branch-name '(hotfix|bugfix|feature)\/.+' --ignore '(staging|develop|master)'
+yarn validate-branch-name -r "^(master|staging|develop){1}$|^(feature|fix|hotfix|release)/.+$"
