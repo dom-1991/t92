@@ -31,28 +31,11 @@ RUN apt install -y nginx
 # Install nvm & node & npm & yarn & pm2
 ###########################################################################
 
-# Replace shell with bash so we can source files
-#RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-#
-## nvm environment variables
-#ENV NODE_VERSION 14.17.1
-#ENV NVM_DIR=/root/.nvm
-#
-#RUN apt-get update && apt-get install wget curl ca-certificates rsync -y
-#RUN wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
-#
-#RUN source "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION}
-#RUN source "$NVM_DIR/nvm.sh" && nvm use v${NODE_VERSION}
-#RUN source "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION}
-#RUN cp /root/.nvm/versions/node/v${NODE_VERSION}/bin/node /usr/bin/
-#RUN cp /root/.nvm/versions/node/v${NODE_VERSION}/bin/npm /usr/bin/
-#
-#RUN /root/.nvm/versions/node/v${NODE_VERSION}/bin/npm install yarn --global
-
 RUN curl -sL https://deb.nodesource.com/setup_16.x  | bash -
 RUN apt-get -y install nodejs
 #RUN npm upgrade
-RUN npm install yarn --global
+RUN npm install -g yarn
+RUN npm install -g pnpm
 #RUN yarn global add pm2
 
 ###########################################################################
