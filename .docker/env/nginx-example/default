@@ -1,6 +1,8 @@
 server {
     listen 80;
-    server_name sample-domain.local;
+    listen [::]:80;
+    
+    server_name api-test.local;
     root /var/www/html/web/public;
 
     server_tokens off;
@@ -33,4 +35,3 @@ server {
     gzip_min_length 256;
     gzip_types text/plain text/css application/javascript application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript application/vnd.ms-fontobject application/x-font-ttf font/opentype image/svg+xml image/x-icon;
 }
-

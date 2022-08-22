@@ -36,7 +36,7 @@ RUN apt-get -y install nodejs
 #RUN npm upgrade
 RUN npm install -g yarn
 RUN npm install -g pnpm
-#RUN yarn global add pm2
+RUN npm install -g pm2
 
 ###########################################################################
 # Install common util
