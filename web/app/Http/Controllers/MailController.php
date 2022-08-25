@@ -5,17 +5,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Jobs\SendEmail;
 use Carbon\Carbon;
+use App\Http\Requests\EmailRequest;
 
 class MailController extends Controller
 {
-    public function sendEmail(Request $request)
+    public function sendEmail(EmailRequest $request)
     {
-        $request->validate([
-            'email' => 'required|unique:newsletter,email'
-        ]);
-
         event(new \App\Events\SendEmailService($request->all()));
-        \Log::info(['111111111111', Carbon::now()]);
-        return 'ok';
+        return response()->json([
+            'message' => 'Sending .. OK'            
+        ], 200);
     }
 }

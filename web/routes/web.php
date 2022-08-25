@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\AuthController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 
+Route::get('/login/{provider}', [AuthController::class, 'redirectToProvider'])
+    ->name('social.login');
+    
+Route::get('/auth/{provider}/callback', [AuthController::class, 'handleProviderCallback'])
+    ->name('social.callback');
 Route::get('/general', function(){
 	return view('pages.forms.general');
 });

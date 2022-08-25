@@ -4,10 +4,21 @@ namespace App\Repositories\Admin;
 use App\Repositories\Admin\AdminInterface;
 use App\Repositories\EloquentRepository;
 use Carbon\Carbon;
+use DB;
 
 class AdminRepository extends EloquentRepository implements AdminInterface
 {
 
+    /**
+     * get model
+     * @return string
+     */
+
+    public function getDB()
+    {
+        return \App\Models\User::class;
+    }
+    
     public function getListAmin(array $filters){
 
         $queryUser = $this->_model::query();
@@ -28,15 +39,7 @@ class AdminRepository extends EloquentRepository implements AdminInterface
         return $result;
     }
 
-    /**
-     * get model
-     * @return string
-     */
-
-    public function getModel()
-    {
-        return \App\Models\User::class;
-    }
+    
 
 
 

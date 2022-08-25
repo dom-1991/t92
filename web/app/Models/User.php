@@ -8,6 +8,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use DB;
+use App\Http\Resources\UserResource;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -22,6 +24,9 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
+        'provider',
+        'provider_id',
+        'avatar'
     ];
 
     /**
@@ -41,6 +46,7 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'role_ids' => 'json' 
     ];
 
     /**
@@ -59,5 +65,18 @@ class User extends Authenticatable implements JWTSubject
      */
     public function getJWTCustomClaims() {
         return [];
+    }
+
+    public static function getPermission(){
+        $user = new UserResource(auth()->user());
+        return [
+            'permission' =>
+                DB::table('role_route')->whereIn('role_id', $user->role_ids)
+                ->join('roles', 'role_route.role_id', '=', 'roles.id')
+                ->join('routes', 'role_route.route_id', '=', 'routes.id')
+                ->select('roles.name', 'routes.name_frontend', 'routes.name_backend')            
+                ->get(),
+            'user' => $user
+        ];
     }
 }

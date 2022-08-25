@@ -12,6 +12,7 @@ class AdminController extends Controller
     public $adminRepository;
 
     public function __construct(AdminInterface $adminRepository){
+        $this->middleware('permission');        
         $this->adminRepository = $adminRepository;
     }
 

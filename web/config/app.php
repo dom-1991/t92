@@ -175,6 +175,10 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
+<<<<<<< HEAD
+        Laravel\Socialite\SocialiteServiceProvider::class,
+=======
+>>>>>>> 8ec3cad15cf4d4070a42fb68326a4a0071386906
 
     ],
 
@@ -232,6 +236,10 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
         'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
+<<<<<<< HEAD
+        'Socialite' => Laravel\Socialite\Facades\Socialite::class,
+=======
+>>>>>>> 8ec3cad15cf4d4070a42fb68326a4a0071386906
 
     ],
 

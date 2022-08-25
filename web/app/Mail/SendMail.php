@@ -31,8 +31,7 @@ class SendMail extends Mailable
      */
     public function build()
     {
-        \Log::info(['3333333333333', Carbon::now()]);
-        return $this->view('mail', [
+        return $this->view('mail.mail', [
             'email' => $this->email
         ]);
     }

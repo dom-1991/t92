@@ -12,18 +12,9 @@ class CategoryEloquentRepository extends EloquentRepository implements CategoryR
      * @return string
      */
 
-    public function getModel()
+    public function getDB()
     {
         return \App\Models\Category::class;
-    }
-
-    /**
-     * Get 5 posts hot in a month the last
-     * @return mixed
-     */
-    public function getCategoryHost()
-    {
-        return $this->_model::where('created_at', '>=', Carbon::now()->subMonth())->orderBy('created_at', 'desc')->take(10)->get();
     }
 
     public function create(array $attributes){
@@ -31,6 +22,7 @@ class CategoryEloquentRepository extends EloquentRepository implements CategoryR
     }
 
     public function extraFunc(){
-    	return '11111111111';
+        
     }
+
 }

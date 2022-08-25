@@ -30,7 +30,6 @@ class SendEmailServiceListener implements ShouldQueue
      */
     public function handle(SendEmailService $event)
     {
-        \Log::info(['2222222222222', Carbon::now()]);
         DB::table('newsletter')->insert([
             'email' => $event->email['email']
         ]);

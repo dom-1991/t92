@@ -17,7 +17,7 @@ class PostEloquentRepository extends EloquentRepository implements PostRepositor
      * @return string
      */
 
-    public function getModel()
+    public function getDB()
     {
         return \App\Models\Post::class;
     }
