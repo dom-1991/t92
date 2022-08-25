@@ -27,6 +27,11 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Admin\AdminInterface::class,
             \App\Repositories\Admin\AdminRepository::class
         );
+
+        $this->app->singleton(
+            \App\Repositories\Role\RoleRepositoryInterface::class,
+            \App\Repositories\Role\RoleEloquentRepository::class            
+        );
     }
 
     /**

@@ -24,12 +24,13 @@ Route::group([
     'prefix' => 'auth'
 
 ], function ($router) {
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::post('/refresh', [AuthController::class, 'refresh']);
-    Route::get('/user-profile', [AuthController::class, 'userProfile']);
-    Route::post('/change-pass', [AuthController::class, 'changePassWord']);    
+    Route::post('/login', [AuthController::class, 'login'])->name('login');
+    Route::post('/register', [AuthController::class, 'register'])->name('register');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::post('/refresh', [AuthController::class, 'refresh'])->name('refresh');
+    Route::get('/user-profile', [AuthController::class, 'userProfile'])->name('userProfile');
+    Route::post('/change-pass', [AuthController::class, 'changePassWord'])->name('changePassWord');  
+    Route::post('/{provider}/user-from-token', [AuthController::class, 'userFromTokenApi'])->name('social.userFromTokenApi');
 });
 
 Route::group([
@@ -37,6 +38,8 @@ Route::group([
     'prefix' => 'admin'
 
 ], function ($router) {
-    Route::get('/admin-list', [App\Http\Controllers\AdminController::class, 'getListAmin']); 
-    Route::get('/email', [App\Http\Controllers\MailController::class, 'sendEmail']);
+    Route::get('/admin-list', [App\Http\Controllers\AdminController::class, 'getListAmin'])->name('admin-list'); 
+    Route::post('/email', [App\Http\Controllers\MailController::class, 'sendEmail'])->name('send-email');
+    Route::post('/upload', [App\Http\Controllers\UploadController::class, 'upload'])->name('multi-upload-images');
+    Route::apiResource('/roles', App\Http\Controllers\RoleController::class);
 });

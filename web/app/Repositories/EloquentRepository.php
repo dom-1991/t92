@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 use App\Repositories\RepositoryInterface;
+use Exception;
 
 abstract class EloquentRepository implements RepositoryInterface
 {
@@ -15,33 +16,38 @@ abstract class EloquentRepository implements RepositoryInterface
      */
     public function __construct()
     {
-        $this->setModel();
+        $this->setDB();
     }
 
     /**
      * get model
      * @return string
      */
-    abstract public function getModel();
+    // abstract public function getModel();
+    abstract public function getDB();
 
     /**
      * Set model
      */
-    public function setModel()
+    // public function setModel()
+    // {
+    //     $this->_model = app()->make(
+    //         $this->getModel()
+    //     );
+    // }
+
+    public function setDB()
     {
-        $this->_model = app()->make(
-            $this->getModel()
-        );
+        $this->_model = $this->getDB();
     }
 
     /**
      * Get All
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
-    public function getAll()
-    {
-
-        return $this->_model->all();
+    public function getAll($params)
+    {   
+        return $this->_model->get();
     }
 
     /**
@@ -49,10 +55,11 @@ abstract class EloquentRepository implements RepositoryInterface
      * @param $id
      * @return mixed
      */
-    public function find($id)
+    public function find($params)
     {
-        $result = $this->_model->find($id);
-
+        $result = $this->_model->where(function($query) use ($params){
+            $query->where('id', $params);
+        })->get();
         return $result;
     }
 
@@ -63,8 +70,18 @@ abstract class EloquentRepository implements RepositoryInterface
      */
     public function create(array $attributes)
     {
-
-        return $this->_model->create($attributes);
+        try {
+            return $this->_model->insert($attributes);
+        } catch (Exception $e) {
+            if (str_contains($e->getMessage(), 'SQLSTATE[23000]:')) { 
+                return [
+                    'error' => 1,
+                    'message' => \App\Message\Message::UNIQUE_FOREIN_KEY
+                ];
+            }
+            return $e->getMessage();
+        }
+        
     }
 
     /**

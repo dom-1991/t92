@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-// use App\Repositories\Post\PostEloquentRepository;
 use App\Repositories\Post\PostRepositoryInterface;
 
 class PostController extends Controller
