@@ -15,6 +15,7 @@ use App\Http\Controllers\AuthController;
 |
 */
 
+
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
@@ -24,13 +25,16 @@ Route::group([
     'prefix' => 'auth'
 
 ], function ($router) {
+    Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('forgotPassword');
     Route::post('/login', [AuthController::class, 'login'])->name('login');
     Route::post('/register', [AuthController::class, 'register'])->name('register');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::post('/refresh', [AuthController::class, 'refresh'])->name('refresh');
     Route::get('/user-profile', [AuthController::class, 'userProfile'])->name('userProfile');
     Route::post('/change-pass', [AuthController::class, 'changePassWord'])->name('changePassWord');  
-    Route::post('/{provider}/user-from-token', [AuthController::class, 'userFromTokenApi'])->name('social.userFromTokenApi');
+    Route::post('/change-pass-from-email-link', [AuthController::class, 'changePassWordFromEmailLink'])->name('changePassWordFromEmailLink');
+    Route::post('/{provider}/user-from-token', [AuthController::class, 'userFromTokenApi'])
+    ->name('social.userFromTokenApi');
 });
 
 Route::group([

@@ -22,7 +22,7 @@ class CategoryEloquentRepository extends EloquentRepository implements CategoryR
     }
 
     public function extraFunc(){
-        
+
     }
 
 }

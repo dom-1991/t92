@@ -24,7 +24,11 @@ class EventServiceProvider extends ServiceProvider
 
         SendEmailService::class => [
             SendEmailServiceListener::class
-        ]
+        ],
+
+        \App\Events\ForgotPassWordEvent::class => [
+            \App\Listeners\ForgotPasswordListener::class
+        ],
     ];
 
     /**

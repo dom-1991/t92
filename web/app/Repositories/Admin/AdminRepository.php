@@ -8,7 +8,6 @@ use DB;
 
 class AdminRepository extends EloquentRepository implements AdminInterface
 {
-
     /**
      * get model
      * @return string
@@ -40,7 +39,5 @@ class AdminRepository extends EloquentRepository implements AdminInterface
     }
 
     
-
-
 
 }
