@@ -33,7 +33,6 @@ class SendEmailServiceListener implements ShouldQueue
         DB::table('newsletter')->insert([
             'email' => $event->email['email']
         ]);
-
         Mail::to($event->email['email'])->send(new SendMail($event->email));
     }
 }

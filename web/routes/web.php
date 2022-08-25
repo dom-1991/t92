@@ -13,6 +13,9 @@ use App\Http\Controllers\AuthController;
 |
 */
 
+Route::get('/reset-password/{token}', function ($token) {
+    return view('auth.reset-password', ['token' => $token]);
+})->middleware('guest')->name('password.reset');
 
 Route::get('/login/{provider}', [AuthController::class, 'redirectToProvider'])
     ->name('social.login');

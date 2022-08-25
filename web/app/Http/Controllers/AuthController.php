@@ -12,6 +12,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Resources\UserResource;
 use App\Message\Message;
 use DB;
+use Illuminate\Support\Facades\Password;
 
 class AuthController extends Controller
 {
@@ -21,7 +22,7 @@ class AuthController extends Controller
      * @return void
      */
     public function __construct() {        
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'userFromTokenApi', 'redirectToProvider', 'handleProviderCallback']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'userFromTokenApi', 'redirectToProvider', 'handleProviderCallback', 'forgotPassword', 'changePassword', 'changePassWordFromEmailLink']]);
     }
 
     /**
@@ -29,9 +30,26 @@ class AuthController extends Controller
      *
      * @return Response
      */
+    
+    public function forgotPassword(Request $request){
+        $input = $request->all();        
+        $rules = array(
+            'email' => "required|email",
+        );
+        $validator = Validator::make($input, $rules);
+        if ($validator->fails()) {
+            $arr = array("status" => 400, "message" => $validator->errors()->first(), "data" => array());
+        } else {
+            try {
+                event(new \App\Events\ForgotPassWordEvent($request->only('email')));
+            } catch (\Exception $e) {
+                return $e->getMessage();
+            }
+        }
+        return 'Sending .. ok';
+    }
 
     public function userFromTokenApi($provider){
-
         $user = Social::driver($provider)->userFromToken(Request()->token);
         $user->getId();
         $user->getNickname();
@@ -161,7 +179,6 @@ class AuthController extends Controller
      */
     public function logout() {
         auth()->logout();
-
         return response()->json(['message' => Message::LOGOUT_SUCCESS]);
     }
 
@@ -198,7 +215,6 @@ class AuthController extends Controller
             $permission_role_name[] = $permission->name;
             $permission_name_frontend[] = $permission->name_frontend;            
         }
-
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
@@ -211,7 +227,6 @@ class AuthController extends Controller
 
     public function changePassWord(Request $request) {
         $validator = Validator::make($request->all(), [
-            'old_password' => 'required|string|min:6',
             'new_password' => 'required|string|confirmed|min:6',
         ]);
 
@@ -221,12 +236,47 @@ class AuthController extends Controller
         $userId = auth()->user()->id;
 
         $user = User::where('id', $userId)->update(
-                    ['password' => bcrypt($request->new_password)]
-                );
-
+            ['password' => bcrypt($request->new_password)]
+        );
         return response()->json([
             'message' => Message::PASSWORD_CHANGE_SUCCESS,
             'user' => $user,
         ], 201);
+    }
+
+    public function changePassWordFromEmailLink(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'new_password' => 'required|string|confirmed|min:6',
+            'token' => 'required|string'
+        ]);
+        if($validator->fails()){
+            return response()->json($validator->errors()->toJson(), 400);
+        }
+        // dd(DB::table('password_resets')->get());
+        $result = DB::table('password_resets')->where('token', $request->token);
+
+        if(count($result->get()) == 1){
+            if((strtotime($result->get()[0]->created_at) + env('LIMIT_TIME_CHANGE_PASS')) > time()){
+                $user = User::where('email', $request->email)->update(
+                    ['password' => bcrypt($request->new_password)]
+                );
+                $result->delete();
+                return [
+                    'error' => 0,
+                    'message' => \App\Message\Message::PASSWORD_CHANGE_SUCCESS
+                ];
+            }else{
+                return [
+                    'error' => 1,
+                    'message' => \App\Message\Message::FORGOT_PASSWORD_5P
+                ];                
+                
+            }
+        }else{
+            return [
+                'error' => 1,
+                'message' => \App\Message\Message::TOKEN_NOT_FOUND
+            ];
+        }
     }
 }

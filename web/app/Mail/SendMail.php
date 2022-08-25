@@ -20,7 +20,7 @@ class SendMail extends Mailable
     
     public $email;
     public function __construct($email)
-    {
+    {        
         $this->email = $email;
     }
 

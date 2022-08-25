@@ -16,4 +16,5 @@ class MailController extends Controller
             'message' => 'Sending .. OK'            
         ], 200);
     }
+
 }

@@ -23,12 +23,13 @@ abstract class EloquentRepository implements RepositoryInterface
      * get model
      * @return string
      */
-    // abstract public function getModel();
+
     abstract public function getDB();
 
     /**
      * Set model
      */
+
     // public function setModel()
     // {
     //     $this->_model = app()->make(
@@ -45,6 +46,7 @@ abstract class EloquentRepository implements RepositoryInterface
      * Get All
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
+
     public function getAll($params)
     {   
         return $this->_model->get();
@@ -55,6 +57,7 @@ abstract class EloquentRepository implements RepositoryInterface
      * @param $id
      * @return mixed
      */
+
     public function find($params)
     {
         $result = $this->_model->where(function($query) use ($params){
@@ -81,7 +84,7 @@ abstract class EloquentRepository implements RepositoryInterface
             }
             return $e->getMessage();
         }
-        
+
     }
 
     /**
