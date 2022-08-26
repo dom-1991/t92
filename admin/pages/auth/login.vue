@@ -4,7 +4,7 @@
       <!-- /.login-logo -->
       <div class="card card-outline card-primary">
         <div class="card-header text-center">
-          <a href="javascript:;" class="h1"><b>Admin</b>LTE</a>
+          <nuxt-link to="/"  class="h1"><b>Admin</b>LTE</nuxt-link>
         </div>
         <div class="card-body">
           <p class="login-box-msg">Sign in to start your session</p>
@@ -20,7 +20,7 @@
                 </div>
               </div>
             </div>
-            <validate-message :messages="this.errors.email" />
+            <validate-message :messages="errors.email" />
             <div class="input-group mt-3">
               <input type="password"
                      v-model="form.password"
@@ -31,7 +31,7 @@
                 </div>
               </div>
             </div>
-            <validate-message :messages="this.errors.password" />
+            <validate-message :messages="errors.password" />
             <div class="row mt-3">
               <div class="col-4">
                 <button type="submit" class="btn btn-primary btn-block">Sign In</button>
@@ -50,11 +50,8 @@
           </div>
           <!-- /.social-auth-links -->
 
-          <p class="mb-1">
-            <nuxt-link to="/auth/forgot-password">Forgot password</nuxt-link>
-          </p>
           <p class="mb-0">
-            <nuxt-link to="/auth/register" class="text-center">Register a new membership</nuxt-link>
+            <nuxt-link to="/auth/forgot-password">Forgot password</nuxt-link>
           </p>
         </div>
         <!-- /.card-body -->
@@ -69,7 +66,7 @@
 import ValidateMessage from '~/components/common/ValidateMessage.vue';
 export default {
   layout: 'auth',
-  auth: false,
+  auth: 'guest',
   components: {
     ValidateMessage
   },
@@ -79,38 +76,17 @@ export default {
         email: '',
         password: ''
       },
-      errors: {
-        email: [],
-        password: []
-      },
-      // token: this.$auth.getToken('token')
     }
   },
-  async mounted() {
-    if (this.token) {
-      await this.$router.push('/')
-    }
+  computed: {
+    errors() { return this.$store.state.user.errors }
   },
   methods: {
     async login() {
-      this.resetErrorMessage();
-      this.$root.$loading.start()
-      try {
-        const res = await this.$auth.loginWith('local', { data: this.form })
-        if (res && res.status === 200) {
-          const { data } = res
-          this.$auth.$storage.syncUniversal('_token.local',  'Bearer ' + data.access_token)
-          this.$auth.setUser(data.user)
-          await this.$router.push('/')
-        }
-        this.$root.$loading.finish()
-      } catch (e) {
-        this.$root.$loading.finish()
-        const { response } = e
-        if (response && response.status === 422) {
-          this.errors = response.data
-        }
-      }
+      await this.$root.$loading.start()
+      await this.$store.dispatch('user/resetErrorMessage')
+      await this.$store.dispatch('user/loginLocal', { data: this.form })
+      await this.$root.$loading.finish();
     },
 
     loginGoogle() {
@@ -120,13 +96,6 @@ export default {
     loginFacebook() {
       this.$auth.loginWith('facebook')
     },
-
-    resetErrorMessage () {
-      this.errors = {
-        email: [],
-        password: []
-      }
-    }
   }
 }
 </script>

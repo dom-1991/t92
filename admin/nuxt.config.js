@@ -52,6 +52,7 @@ export default {
   ** Global CSS
   */
   css: [
+    '~assets/scss/global.scss'
   ],
   /*
   ** Plugins to load before mounting the App
@@ -78,7 +79,8 @@ export default {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     '@nuxtjs/vendor',
-    '@nuxtjs/auth-next'
+    '@nuxtjs/auth-next',
+    '@nuxtjs/toast',
   ],
   /*
   ** Axios module configuration
@@ -126,5 +128,8 @@ export default {
       home: '/',
     }
   },
-  vendor: [ 'admin-lte' ]
+  vendor: [ 'admin-lte' ],
+  toast: {
+    position: 'top-right',
+  },
 }
