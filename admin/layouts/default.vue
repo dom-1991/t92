@@ -1,7 +1,7 @@
 <template>
   <div>
     <NavBar />
-    <SideBar />
+    <SideBar :logout="logout" />
     <nuxt class="content-wrapper" />
     <Footer />
   </div>
@@ -14,6 +14,14 @@ import Footer from '../components/pages/Footer'
 export default {
   components: {
     NavBar, SideBar, Footer
+  },
+  methods: {
+    async logout () {
+      this.$root.$loading.start()
+      await this.$auth.logout()
+      await this.$router.push('/auth/login')
+      this.$root.$loading.finish()
+    }
   }
 }
 </script>

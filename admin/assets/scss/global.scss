@@ -1,0 +1,7 @@
+.toasted-container {
+  min-width: unset !important;
+  &.top-right {
+    top: 20px !important;
+    right: 20px !important;
+  }
+}

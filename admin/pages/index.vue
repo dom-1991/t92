@@ -117,21 +117,6 @@
 <script>
 export default {
   components: {},
-  data() {
-    return {
-      provider: this.$auth.strategy.options.name,
-    }
-  },
-  async mounted() {
-    if (this.provider && this.provider !== 'local') {
-      const res = await this.$axios.$post(
-        `/auth/${this.provider}/user-from-token`, {token: this.$auth.strategy.token.get().replace('Bearer ', '')}
-      )
-      const { access_token, user } = res
-      this.$auth.$storage.setUniversal('token', 'Bearer ' + access_token)
-      this.$auth.$storage.setUniversal('user', user)
-    }
-  },
 }
 </script>
 
