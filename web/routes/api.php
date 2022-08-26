@@ -44,6 +44,7 @@ Route::group([
 ], function ($router) {
     Route::get('/admin-list', [App\Http\Controllers\AdminController::class, 'getListAmin'])->name('admin-list'); 
     Route::post('/email', [App\Http\Controllers\MailController::class, 'sendEmail'])->name('send-email');
-    Route::post('/upload', [App\Http\Controllers\UploadController::class, 'upload'])->name('multi-upload-images');
-    Route::apiResource('/roles', App\Http\Controllers\RoleController::class);
+    Route::post('/upload', [App\Http\Controllers\UploadController::class, 'upload'])->name('multi-upload-images');    
+    Route::apiResource('/roles', App\Http\Controllers\Roles\RoleController::class);
+    Route::apiResource('/routes', App\Http\Controllers\Routes\RoutesController::class);
 });

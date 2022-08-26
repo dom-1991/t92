@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Roles;
 
 use Illuminate\Http\Request;
 use App\Repositories\Role\RoleRepositoryInterface;
+use App\Http\Requests\RoleRequest;
+use App\Http\Controllers\Controller;
 
 class RoleController extends Controller
 {
@@ -12,6 +14,7 @@ class RoleController extends Controller
 
     public function __construct(RoleRepositoryInterface $roleRepository)
     {
+        $this->middleware('permission');
         $this->roleRepository = $roleRepository;
     }
 
@@ -33,7 +36,7 @@ class RoleController extends Controller
      */
     public function create(Request $request)
     {        
-        return $this->roleRepository->create($request->all());
+        // return $this->roleRepository->create($request->all());
     }
 
     /**
@@ -42,24 +45,9 @@ class RoleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(RoleRequest $request)
     {
-        $request->validate([
-            'name' => 'required|max:50'
-        ]);
-        $result = $this->roleRepository->create($request->all());
-        if($result == true){
-            return response()->json([
-                'error' => 0,
-                'message' => \App\Message\Message::CREATE_SUCCESS
-            ]);
-        }
-        if($result == \App\Message\Message::UNIQUE_FOREIN_KEY){
-            return response()->json([
-                'error' => 1,
-                'message' => \App\Message\Message::UNIQUE_FOREIN_KEY
-            ]);
-        }
+        return $this->roleRepository->createRole($request->all());
     }
 
     /**
@@ -91,9 +79,9 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update($id, RoleRequest $request)
     {
-        //
+        return $this->roleRepository->updateRole($id, $request->all());
     }
 
     /**
@@ -104,6 +92,6 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-        //
+        return $this->roleRepository->destroyRole($id);
     }
 }

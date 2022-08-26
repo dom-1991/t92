@@ -5,14 +5,16 @@ use App\Repositories\Role\RoleRepositoryInterface;
 use App\Repositories\EloquentRepository;
 use Carbon\Carbon;
 use DB;
+use Illuminate\Http\Request;
 
 class RoleEloquentRepository extends EloquentRepository implements RoleRepositoryInterface
 {    
 
-    // public function getModel()
-    // {
-    //     return DB::table('roles');
-    // }
+    public function getDB()
+    {
+        return DB::table('roles');
+    }
+
     public function getRoles($params){
         return $this->_model->where(function($query) use($params){
             if(isset($params['id'])){
@@ -24,17 +26,16 @@ class RoleEloquentRepository extends EloquentRepository implements RoleRepositor
         })->get();
     }
 
-    public function getDB()
-    {
-        return DB::table('roles');
+    public function createRole(array $attributes){
+        return $this->create($attributes);
     }
 
-    public function update($id, array $attributes){
-        $this->update($id, $attributes);
+    public function updateRole($id, array $attributes){
+        return $this->update($id, $attributes);
     }
 
-    public function delete($id){
-        $this->delete($id);
+    public function destroyRole($id){
+        return $this->delete($id);
     }
 
     

@@ -32,6 +32,11 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Role\RoleRepositoryInterface::class,
             \App\Repositories\Role\RoleEloquentRepository::class            
         );
+
+        $this->app->singleton(
+            \App\Repositories\Routes\RoutesInterface::class,
+            \App\Repositories\Routes\RoutesRepository::class            
+        );
     }
 
     /**
