@@ -14,6 +14,7 @@ use App\Message\Message;
 use DB;
 use Illuminate\Support\Facades\Password;
 
+
 class AuthController extends Controller
 {
     /**

@@ -15,7 +15,7 @@ abstract class EloquentRepository implements RepositoryInterface
      * EloquentRepository constructor.
      */
     public function __construct()
-    {
+    {        
         $this->setDB();
     }
 
@@ -74,16 +74,15 @@ abstract class EloquentRepository implements RepositoryInterface
     public function create(array $attributes)
     {
         try {
-            return $this->_model->insert($attributes);
-        } catch (Exception $e) {
-            if (str_contains($e->getMessage(), 'SQLSTATE[23000]:')) { 
-                return [
-                    'error' => 1,
-                    'message' => \App\Message\Message::UNIQUE_FOREIN_KEY
-                ];
-            }
-            return $e->getMessage();
+            $result = $this->_model->insert($attributes);
+            $data['error'] = \App\Message\Message::ERROR_CODE_SUCCESS;;
+            $data['message'] = \App\Message\Message::CREATE_SUCCESS;
+        } catch (Exception $e) {   
+            $data['error'] = \App\Message\Message::ERROR_CODE_FAIL;
+            $data['message'] = $e->getMessage();      
         }
+
+        return $data;
 
     }
 
@@ -95,13 +94,18 @@ abstract class EloquentRepository implements RepositoryInterface
      */
     public function update($id, array $attributes)
     {
-        $result = $this->find($id);
-        if ($result) {
-            $result->update($attributes);
-            return $result;
-        }
-
-        return false;
+        try {
+            $result = $this->_model->where('id', $id);
+            if ($result) {
+                $result->update($attributes);
+            }
+            $data['error'] = \App\Message\Message::ERROR_CODE_SUCCESS;;
+            $data['message'] = \App\Message\Message::UPDATE_SUCCESS;
+        } catch (Exception $e) {
+            $data['error'] = \App\Message\Message::ERROR_CODE_FAIL;
+            $data['message'] = $e->getMessage();
+        }        
+        return $data;
     }
 
     /**
@@ -112,14 +116,18 @@ abstract class EloquentRepository implements RepositoryInterface
      */
     public function delete($id)
     {
-        $result = $this->find($id);
-        if ($result) {
-            $result->delete();
-
-            return true;
-        }
-
-        return false;
+        try {
+            $result = $this->_model->where('id', $id);
+            if ($result) {
+                $result->delete();
+            }
+            $data['error'] = \App\Message\Message::ERROR_CODE_SUCCESS;
+            $data['message'] = \App\Message\Message::DELETE_SUCCESS;
+        } catch (Exception $e) {
+            $data['error'] = \App\Message\Message::ERROR_CODE_FAIL;
+            $data['message'] = $e->getMessage();
+        }        
+        return $data;
     }
 
 }

@@ -20,7 +20,7 @@ class CategoryEloquentRepository extends EloquentRepository implements CategoryR
     public function create(array $attributes){
         $this->_model::create($attributes);
     }
-
+    
     public function extraFunc(){
 
     }

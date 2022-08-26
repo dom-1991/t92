@@ -38,6 +38,9 @@ class AdminRepository extends EloquentRepository implements AdminInterface
         return $result;
     }
 
-    
+    public function getModel()
+    {
+        return \App\Models\User::class;
+    }
 
 }

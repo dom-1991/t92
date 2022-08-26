@@ -14,7 +14,6 @@
 		<h4 class="secondary"><strong>{{$email['email']}}</strong></h4>
 		{{-- <p>{{$email['content']}}</p> --}}
 
-
 	@include('beautymail::templates.widgets.newfeatureEnd')
 
 @stop
