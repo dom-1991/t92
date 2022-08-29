@@ -25,6 +25,7 @@ Route::group([
     'prefix' => 'auth'
 
 ], function ($router) {
+    Route::post('/check-token-valid', [AuthController::class, 'checkTokenValid'])->name('checkTokenValid');
     Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('forgotPassword');
     Route::post('/login', [AuthController::class, 'login'])->name('login');
     Route::post('/register', [AuthController::class, 'register'])->name('register');
@@ -42,9 +43,10 @@ Route::group([
     'prefix' => 'admin'
 
 ], function ($router) {
-    Route::get('/admin-list', [App\Http\Controllers\AdminController::class, 'getListAmin'])->name('admin-list'); 
+    Route::apiResource('users', App\Http\Controllers\AdminController::class); 
     Route::post('/email', [App\Http\Controllers\MailController::class, 'sendEmail'])->name('send-email');
     Route::post('/upload', [App\Http\Controllers\UploadController::class, 'upload'])->name('multi-upload-images');    
     Route::apiResource('/roles', App\Http\Controllers\Roles\RoleController::class);
     Route::apiResource('/routes', App\Http\Controllers\Routes\RoutesController::class);
+    Route::apiResource('/role-route', App\Http\Controllers\Roles\RoleRouteController::class);
 });
