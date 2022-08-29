@@ -13,6 +13,7 @@ use App\Http\Resources\UserResource;
 use App\Message\Message;
 use DB;
 use Illuminate\Support\Facades\Password;
+use App\Http\Requests\AdminRequest;
 
 
 class AuthController extends Controller
@@ -22,32 +23,92 @@ class AuthController extends Controller
      *
      * @return void
      */
+    
+    const PASSWORD_RESETS_TABLE = 'password_resets';
+
     public function __construct() {        
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'userFromTokenApi', 'redirectToProvider', 'handleProviderCallback', 'forgotPassword', 'changePassword', 'changePassWordFromEmailLink']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'userFromTokenApi', 'redirectToProvider', 'handleProviderCallback', 'forgotPassword', 'changePassword', 'changePassWordFromEmailLink', 'checkTokenValid']]);
     }
 
-    /**
-     * Request user info from provider token
-     *
-     * @return Response
-     */
+    public function validateReset(array $credentials)
+    {
+        if (is_null($user = Password::broker()->getUser($credentials))) {
+            return response()->json([
+                'error' => 1,
+                'message' => Message::USER_RESET_INVALID
+            ], Message::ERROR_CODE_400);
+        }
+
+        if (! Password::broker()->tokenExists($user, $credentials['token'])) {
+            return response()->json([
+                'error' => 1,
+                'message' => Message::TOKEN_RESET_INVALID
+            ], Message::ERROR_CODE_400);
+        }
+
+        return response()->json([
+            'error' => 0,
+            'message' => Message::TOKEN_VALID
+        ], Message::ERROR_CODE_200);
+    }
+
     
+    public function checkTokenValid(Request $request){
+
+        $tokenEncode = $this->validateReset(['email' => $request->email, 'token' => $request->token]);
+        $tokenDecode = json_decode(json_encode($tokenEncode));
+        if($tokenDecode->original->error == 0){
+            $result = DB::table(self::PASSWORD_RESETS_TABLE)->where('email', $request->email);
+            if(count($result->get()) == 1){
+                if((strtotime($result->get()[0]->created_at) + env('LIMIT_TIME_CHANGE_PASS')) > time()){
+                    $data['error'] = Message::ERROR_CODE_SUCCESS;
+                    $data['message'] = Message::TOKEN_VALID;
+                    $data['token'] = $result->get()[0]->token;
+                    $data['email'] = $result->get()[0]->email;
+                    return response()->json($data, Message::ERROR_CODE_200);
+                }else{
+                    $data['error'] = 1;
+                    $data['message'] = Message::FORGOT_PASSWORD_5P;
+                    $data['token'] = $request->token;
+                    $data['email'] = null;
+                    return response()->json($data, Message::ERROR_CODE_400);
+                }
+            }else{
+                $data['error'] = Message::ERROR_CODE_404;
+                $data['message'] = Message::TOKEN_NOT_FOUND;
+                $data['token'] = $request->token;
+                $data['email'] = null;
+                return response()->json($data, Message::ERROR_CODE_404);
+            }
+        }
+        return response()->json([
+            'error' => 1,
+            'message' => $tokenDecode->original->message
+        ], Message::ERROR_CODE_400);
+    }
+
     public function forgotPassword(Request $request){
         $input = $request->all();        
         $rules = array(
-            'email' => "required|email",
+            'email' => 'required|string|email|max:100',
         );
         $validator = Validator::make($input, $rules);
         if ($validator->fails()) {
-            $arr = array("status" => 400, "message" => $validator->errors()->first(), "data" => array());
+            return response()->json([
+                'error' => Message::ERROR_CODE_400,
+                'message' => $validator->errors()->first()
+            ], Message::ERROR_CODE_400);
         } else {
-            try {
+            try {                
                 event(new \App\Events\ForgotPassWordEvent($request->only('email')));
             } catch (\Exception $e) {
                 return $e->getMessage();
             }
         }
-        return 'Sending .. ok';
+        return response()->json([
+            'error' => Message::ERROR_CODE_SUCCESS,
+            'message' => Message::SENDING_MAIL_SUCCESS
+        ]);
     }
 
     public function userFromTokenApi($provider){
@@ -60,7 +121,7 @@ class AuthController extends Controller
 
         $authUser = $this->findOrCreateUser($user, $provider);
         if (! $token = Auth::login($authUser, true)) {
-            return response()->json([
+            return response()->json([                
                 'email' => [Message::EMAIL_NOT_FOUND]
             ], 422);
         }
@@ -150,19 +211,9 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function register(Request $request) {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|between:2,100',
-            'email' => 'required|string|email|max:100|unique:users',
-            'password' => 'required|string|confirmed|min:6',
-        ]);
-
-        if($validator->fails()){
-            return response()->json($validator->errors()->toJson(), 400);
-        }
-
+    public function register(AdminRequest $request) {
         $user = User::create(array_merge(
-            $validator->validated(),
+            $request->validated(),
             ['password' => bcrypt($request->password)]
         ));
 
@@ -242,42 +293,39 @@ class AuthController extends Controller
         return response()->json([
             'message' => Message::PASSWORD_CHANGE_SUCCESS,
             'user' => $user,
-        ], 201);
+        ], Message::ERROR_CODE_201);
     }
 
     public function changePassWordFromEmailLink(Request $request) {
         $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
             'new_password' => 'required|string|confirmed|min:6',
             'token' => 'required|string'
         ]);
         if($validator->fails()){
             return response()->json($validator->errors()->toJson(), 400);
         }
-        // dd(DB::table('password_resets')->get());
-        $result = DB::table('password_resets')->where('token', $request->token);
-
-        if(count($result->get()) == 1){
-            if((strtotime($result->get()[0]->created_at) + env('LIMIT_TIME_CHANGE_PASS')) > time()){
-                $user = User::where('email', $request->email)->update(
-                    ['password' => bcrypt($request->new_password)]
-                );
-                $result->delete();
-                return [
-                    'error' => 0,
-                    'message' => \App\Message\Message::PASSWORD_CHANGE_SUCCESS
-                ];
-            }else{
-                return [
-                    'error' => 1,
-                    'message' => \App\Message\Message::FORGOT_PASSWORD_5P
-                ];                
-                
+        $tokenEncode = $this->checkTokenValid($request);
+        $tokenDecode = json_decode(json_encode($tokenEncode));
+        if($tokenDecode->original->error == 0){
+            $user = User::where('email', $request->email)->update(
+                ['password' => bcrypt($request->new_password)]
+            );
+            try {
+                DB::table(self::PASSWORD_RESETS_TABLE)->where('email', $request->email)->delete();
+            } catch (Exception $e) {
+                return $e->getMessage();
             }
+            
+            return response()->json([
+                'error' => 0,
+                'message' => \App\Message\Message::PASSWORD_CHANGE_SUCCESS
+            ], Message::ERROR_CODE_200);
         }else{
-            return [
-                'error' => 1,
-                'message' => \App\Message\Message::TOKEN_NOT_FOUND
-            ];
+            return response()->json([
+                'error' => Message::ERROR_CODE_FAIL,
+                'message' => $tokenDecode->original->message
+            ], Message::ERROR_CODE_400);
         }
     }
 }
