@@ -70,7 +70,7 @@ class User extends Authenticatable implements JWTSubject
         $user = new UserResource(auth()->user());
         return [
             'permission' =>
-                DB::table('role_route')->whereIn('role_id', $user->role_ids)
+                DB::table('role_route')->whereIn('role_id', $user->role_ids??[-1])
                 ->join('roles', 'role_route.role_id', '=', 'roles.id')
                 ->join('routes', 'role_route.route_id', '=', 'routes.id')
                 ->select('roles.name', 'routes.name_frontend', 'routes.name_backend')            

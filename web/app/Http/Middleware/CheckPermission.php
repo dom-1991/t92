@@ -24,8 +24,7 @@ class CheckPermission
             if($routeName == $user->name_backend){
                 return $next($request);
             }
-        }        
-        
+        }                
         return response()->json(['message' => \App\Message\Message::NO_PERMISSION]);
     }
 }
