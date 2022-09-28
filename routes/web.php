@@ -16,3 +16,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::group(['middleware' => 'maintain'], function () {
+    Route::get('duc-son', [\App\Http\Controllers\DateController::class, 'index'])->name('date.index');
+    Route::post('duc-son', [\App\Http\Controllers\DateController::class, 'store'])->name('date.store');
+});
+
+Route::post('/', [\App\Http\Controllers\HomeController::class, 'maintain'])->name('maintain');
