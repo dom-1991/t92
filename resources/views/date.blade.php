@@ -2,7 +2,7 @@
 @push('css')
     <style>
         table input {
-            width: 30px;
+            width: 40px;
         }
         .color-1 {
             background: cadetblue !important;
@@ -47,29 +47,26 @@
     </style>
 @endpush
 @section('content')
-    <div class="container-fluid mt-4">
+    <div class="container mt-4">
         <form method="post">
             @csrf
             <div class="row">
                 @foreach ($months as $key => $month)
                     <div class="col-12 table-responsive">
                         <h4>Tháng {{ $key }}</h4>
-                        <table class="table table-bordered  text-center">
-                            <thead>
+                        <table class="table table-bordered  text-center border">
                             <tr>
-                                @for($i = 1; $i <= $month; $i++)
+                                @for($i = 1; $i <= 11; $i++)
                                     <th>{{ $i }}</th>
                                 @endfor
                             </tr>
-                            </thead>
-                            <tbody>
                             <tr>
                                 @if ($key < 10)
                                 @php
                                     $key = '0' . $key
                                 @endphp
                                 @endif
-                                @for($i = 1; $i <= $month; $i++)
+                                @for($i = 1; $i <= 11; $i++)
                                         @if ($i < 10)
                                             @php
                                                 $i = '0' . $i
@@ -80,7 +77,30 @@
                                     </td>
                                 @endfor
                             </tr>
-                            </tbody>
+                            <tr>
+                                @for($i = 12; $i <= 22; $i++)
+                                    <th>{{ $i }}</th>
+                                @endfor
+                            </tr>
+                            <tr>
+                                @for($i = 12; $i <= 22; $i++)
+                                    <td>
+                                        <input class="text-center" type="text" name="days[{{ "$year-$key-$i" }}]" value="{{ @$dates["$year-$key-$i"] }}">
+                                    </td>
+                                @endfor
+                            </tr>
+                            <tr>
+                                @for($i = 23; $i <= $month; $i++)
+                                    <th>{{ $i }}</th>
+                                @endfor
+                            </tr>
+                            <tr>
+                                @for($i = 23; $i <= $month; $i++)
+                                    <td>
+                                        <input class="text-center" type="text" name="days[{{ "$year-$key-$i" }}]" value="{{ @$dates["$year-$key-$i"] }}">
+                                    </td>
+                                @endfor
+                            </tr>
                         </table>
                     </div>
                 @endforeach
