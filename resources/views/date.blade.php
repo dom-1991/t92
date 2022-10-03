@@ -111,7 +111,7 @@
                 </div>
             </div>
         </form>
-        <form method="get">
+        <form method="get" id="formFilter">
             <div class="row mt-4">
                 <div class="col-3">
                     <input type="date" name="from_date" class="form-control" value="2022-01-01">
@@ -125,29 +125,8 @@
             </div>
         </form>
         <div class="row mt-4">
-            <div class="col-12">
-                <table class="table table-bordered font-weight-bold text-center">
-                    <tr>
-                        @for($i = 0; $i <= 30; $i++)
-                            <td class="color-{{ @$numbers[$i] }}">{{ $i }}</td>
-                        @endfor
-                    </tr>
-                    <tr>
-                        @for($i = 31; $i <= 61; $i++)
-                            <td class="color-{{ @$numbers[$i] }}">{{ $i }}</td>
-                        @endfor
-                    </tr>
-                    <tr>
-                        @for($i = 61; $i <= 91; $i++)
-                            <td class="color-{{ @$numbers[$i] }}">{{ $i }}</td>
-                        @endfor
-                    </tr>
-                    <tr>
-                        @for($i = 91; $i <= 99; $i++)
-                            <td class="color-{{ @$numbers[$i] }}">{{ $i }}</td>
-                        @endfor
-                    </tr>
-                </table>
+            <div class="col-12" id="filterPreview">
+                @include('date_table')
             </div>
         </div>
         <div class="row my-4">
@@ -163,3 +142,19 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        $('#formFilter').submit(function (e) {
+            e.preventDefault();
+            let $form = $(this)
+            $.ajax({
+                url: "{{ request()->fullUrl() }}?" + $form.serialize(),
+                method: 'get',
+                success: function (response) {
+                    $('#filterPreview').html(response.view)
+                }
+            })
+        })
+    </script>
+@endpush

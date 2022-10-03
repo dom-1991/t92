@@ -28,6 +28,9 @@ class DateController extends Controller
         for($i = 1; $i < 13; $i++) {
             $months[$i] = Carbon::createFromDate($year, $i)->daysInMonth;
         }
+        if ($request->ajax()) {
+            return response()->json(['view' => view('date_table', compact( 'numbers'))->render()]);
+        }
         return view('date', compact('dates', 'numbers', 'months', 'year'));
     }
 
