@@ -1,6 +1,9 @@
 <table class="table table-bordered font-weight-bold text-center">
     <tr>
         @for($i = 0; $i <= 30; $i++)
+            @php
+                $i = ($i < 10 ? '0' : '') . $i
+            @endphp
             <td class="color-{{ @$numbers[$i] }}">{{ $i }}</td>
         @endfor
     </tr>
