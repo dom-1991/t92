@@ -17,7 +17,7 @@ class PostController extends Controller
         $ip = Common::getClientIp();
         $posts = Post::with('reactions')->withCount('reactions');
         if ($request->search) {
-            $posts->where('name', 'ilike', "%$request->search%");
+            $posts->where('name', 'like', "%$request->search%");
         }
         $posts = $posts->orderBy('reactions_count', 'desc')
             ->paginate(config('app.paginate'));
