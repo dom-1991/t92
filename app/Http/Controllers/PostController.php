@@ -33,7 +33,7 @@ class PostController extends Controller
         }
         $imageUrl = '';
         if ($request->image) {
-            $imageName = uniqid() . '.' . $request->image->getClientOriginalExtension()();
+            $imageName = uniqid() . '.' . $request->image->getClientOriginalExtension();
             $request->image->storeAs('public/avatar', $imageName);
             $imageUrl = asset('/storage/avatar/' . $imageName);
         }
