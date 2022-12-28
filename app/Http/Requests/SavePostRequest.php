@@ -25,7 +25,7 @@ class SavePostRequest extends FormRequest
     {
         return [
             'name' => 'nullable|max:256',
-            'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048'
+            'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:10240'
         ];
     }
 }
