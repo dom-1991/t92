@@ -22,7 +22,7 @@
                     </div>
                     <div class="mt-3">
                         <label for="formFile" class="form-label">Ảnh nền <span class="text-danger">*</span></label>
-                        <input class="form-control" name="image" type="file" id="formFile">
+                        <input class="form-control" name="image" type="file" id="formFile" accept="image/*">
                         @error('image')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
