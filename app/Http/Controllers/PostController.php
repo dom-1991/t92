@@ -33,9 +33,8 @@ class PostController extends Controller
         }
         $imageUrl = '';
         if ($request->image) {
-            $imageName = uniqid() . '.' . $request->image->getClientOriginalExtension();
-            $request->image->storeAs('public/avatar', $imageName);
-            $imageUrl = asset('/storage/avatar/' . $imageName);
+            $imageName = Storage::put('public/avatar', $request->image);
+            $imageUrl = asset(str_replace('public/', 'storage/', $imageName));
         }
         Post::create([
             'name' => $request->name,
