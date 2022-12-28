@@ -58,20 +58,24 @@ class PostController extends Controller
         return response()->json(['message' => 'Thành công'], 201);
     }
 
-    public function show ($id)
+    public function show ($id, Request $request)
     {
         $post = Post::withCount('reactions')->find($id);
         if ($post) {
-            return response()->json([
-                'message' => 'Thành công',
-                'data' => [
-                    'image' => $post->image,
-                    'body' => $post->body,
-                    'date' => $post->created_at->format('d/m/Y'),
-                    'name' => $post->name,
-                    'count' => $post->reactions_count
-                ]
-            ], 200);
+            if($request->ajax()) {
+                return response()->json([
+                    'message' => 'Thành công',
+                    'data' => [
+                        'image' => $post->image,
+                        'body' => $post->body,
+                        'date' => $post->created_at->format('d/m/Y'),
+                        'name' => $post->name,
+                        'count' => $post->reactions_count
+                    ]
+                ], 200);
+            }
+
+            return view('posts.show', compact('post'));
         }
 
         return response()->json([

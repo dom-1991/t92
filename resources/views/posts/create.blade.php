@@ -35,7 +35,7 @@
                         <textarea name="body" id="editor" class="form-control"></textarea>
                     </div>
                 </div>
-                <div class="col-12 mt-3">
+                <div class="col-12 mt-3 mb-5">
                     <div class="d-flex justify-content-end w-100">
                         <button class="btn btn-primary">Đăng</button>
                     </div>
