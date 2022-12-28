@@ -12,6 +12,9 @@
             </div>
             <form action="{{ route('posts.store') }}" method="post" enctype="multipart/form-data">
                 @csrf
+                @error('message')
+                <span class="text-danger">{{ $message }}</span>
+                @enderror
                 <div class="col-12 mt-3">
                     <div class="form-group">
                         <label for="name">Biệt danh</label>
