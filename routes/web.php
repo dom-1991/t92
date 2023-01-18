@@ -22,5 +22,6 @@ Route::group(['as' => 'posts.', 'prefix' => 'posts'], function () {
     })->name('create');
     Route::post('', [PostController::class, 'store'])->name('store');
     Route::post('{id}/reaction', [PostController::class, 'reaction'])->name('reaction');
+    Route::post('{id}/comment', [PostController::class, 'comment'])->name('comment');
     Route::get('{id}', [PostController::class, 'show'])->name('show');
 });

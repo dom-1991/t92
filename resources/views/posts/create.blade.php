@@ -23,8 +23,35 @@
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
+                    <div class="form-group mt-3">
+                        <label for="month">Tháng / năm</label>
+                        <div class="row">
+                            <div class="col-6">
+                                <select name="month" class="form-control" id="">
+                                    @for($i = 1; $i <= 12; $i++)
+                                        <option value="{{ $i }}"> Tháng {{ $i }}</option>
+                                    @endfor
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <select name="year" class="form-control" id="">
+                                    @for($i = 2023; $i <= 2033; $i++)
+                                        <option value="{{ $i }}"> Năm {{ $i }}</option>
+                                    @endfor
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="price_estimate">Chi phí dự kiến</label>
+                        <input type="number" id="price_estimate" name="price_estimate" class="form-control">
+                        <span id="amount-preview"></span>
+                        @error('price_estimate')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
                     <div class="mt-3">
-                        <label for="formFile" class="form-label">Ảnh nền <span class="text-danger">*</span></label>
+                        <label for="formFile" class="form-label">Hình ảnh <span class="text-danger">*</span></label>
                         <input class="form-control" name="image" type="file" id="formFile" accept="image/*">
                         @error('image')
                             <span class="text-danger">{{ $message }}</span>
@@ -48,5 +75,35 @@
     <script src="https://cdn.ckeditor.com/4.20.1/standard/ckeditor.js"></script>
     <script>
         CKEDITOR.replace('editor');
+        $(document).ready(function () {
+            amountPreview();
+        })
+        $(document).on('keyup', '#price_estimate', (function () {
+            let amount = $(this).val()
+            $('#amount-preview').text(addCommas(amount) + ' đồng')
+        }))
+
+        function amountPreview ()
+        {
+            let amount = $('#price_estimate').val()
+            if (amount > 0) {
+                $('#amount-preview').text(addCommas(amount) + ' đồng')
+            } else {
+                $('#amount-preview').text('')
+            }
+        }
+
+        function addCommas(nStr)
+        {
+            nStr += '';
+            x = nStr.split('.');
+            x1 = x[0];
+            x2 = x.length > 1 ? '.' + x[1] : '';
+            var rgx = /(\d+)(\d{3})/;
+            while (rgx.test(x1)) {
+                x1 = x1.replace(rgx, '$1' + ',' + '$2');
+            }
+            return x1 + x2;
+        }
     </script>
 @endpush

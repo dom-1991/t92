@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Common;
 use App\Http\Requests\SavePostRequest;
+use App\Models\Comment;
 use App\Models\Post;
 use App\Models\Reaction;
 use Carbon\Carbon;
@@ -19,8 +20,9 @@ class PostController extends Controller
         if ($request->search) {
             $posts->where('name', 'like', "%$request->search%");
         }
-        $posts = $posts->orderBy('reactions_count', 'desc')
-            ->paginate(config('app.paginate'));
+        $posts = $posts->orderBy('year')
+            ->orderBy('month')
+            ->get();
         return view('homepage', compact('posts', 'ip'));
     }
 
@@ -40,7 +42,10 @@ class PostController extends Controller
             'name' => $request->name,
             'image' => $imageUrl,
             'body' => $request->body,
-            'ip' => $ip
+            'ip' => $ip,
+            'month' => $request->month,
+            'year' => $request->year,
+            'price_estimate' => $request->price_estimate,
         ]);
 
         return redirect()->route('homepage', ['search' => $request->name])->with(['message' => 'Thêm thành công!']);
@@ -63,23 +68,23 @@ class PostController extends Controller
         $post = Post::withCount('reactions')->find($id);
         if ($post) {
             if($request->ajax()) {
-                return response()->json([
-                    'message' => 'Thành công',
-                    'data' => [
-                        'image' => $post->image,
-                        'body' => $post->body,
-                        'date' => $post->created_at->format('d/m/Y'),
-                        'name' => $post->name,
-                        'count' => $post->reactions_count
-                    ]
-                ], 200);
+                $data = [
+                    'view' => view('blocks.post', compact('post'))->render()
+                ];
+                return response()->json($data, 200);
             }
 
             return view('posts.show', compact('post'));
         }
-
         return response()->json([
             'message' => 'Id không tồn tại!'
         ], 404);
+    }
+
+    public function comment($id, Request $request)
+    {
+        $ip = Common::getClientIp();
+        Comment::create(['post_id' => $id, 'ip' => $ip, 'text' => $request->text]);
+        return redirect()->route('homepage');
     }
 }

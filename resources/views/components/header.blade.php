@@ -2,7 +2,9 @@
     <div class="container">
         <div class="row">
             <div class="col-2 col-md-1">
-                <img src="{{ asset('image/logo.png') }}" alt="" style="height: 60px">
+                <a href="{{ route('homepage') }}">
+                    <img src="{{ asset('image/logo.png') }}" alt="" style="height: 60px">
+                </a>
             </div>
             <div class="col-md-10 col-8 pt-2">
                 <div class="box-search border border-secondary border-1 position-relative pe-5 ps-3">

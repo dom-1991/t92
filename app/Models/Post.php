@@ -10,11 +10,18 @@ use Illuminate\Database\Eloquent\Model;
 class Post extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'body', 'image', 'ip'];
+    protected $fillable = ['name', 'body', 'image', 'ip', 'month', 'year', 'price_estimate', 'price', 'status'];
+    const NEW = 1;
+    const DONE = 2;
 
     public function reactions ()
     {
         return $this->hasMany(Reaction::class);
+    }
+
+    public function comments ()
+    {
+        return $this->hasMany(Comment::class);
     }
 
     public function getIsActionAttribute()

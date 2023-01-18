@@ -7,7 +7,7 @@
                     <div class="rounded h-100 overflow-hidden position-relative">
                         <img src="{{ $post->image }}" alt="" class="h-100 __image">
                         <div class="hearth rounded position-absolute" data-url="{{ $post->is_action ? '' : route('posts.reaction', $post->id) }}">
-                            <i class="fas fa-heart __icon {{ $post->is_action ? 'active' : '' }}"></i>
+                            <i class="fas fa-heart __icon {{ $post->status == \App\Models\Post::DONE ? 'done' : ($post->is_action ? 'active' : '') }}"></i>
                         </div>
                     </div>
                 </div>
@@ -21,23 +21,14 @@
         $(document).ready(function() {
             $('.avatar').click(function () {
                 let url = $(this).data('url')
-                $('#post-modal .__image').attr('src', $(this).data('image'))
-                $('#post-modal .__name').text('')
-                $('#post-modal .__date').text('')
-                $('#post-modal .__count').text('')
-                $('#post-modal .__content').html('')
                 $.ajax({
                     method: 'get',
                     url: url,
                     success: function (response) {
-                        let data = response.data
-                        $('#post-modal .__name').text(data.name ?? 'Người lạ')
-                        $('#post-modal .__date').text(data.date)
-                        $('#post-modal .__count').text(data.count)
-                        $('#post-modal .__content').html(data.body)
+                        $('#post').html(response.view)
+                        $('#post-modal').modal('show');
                     }
                 })
-                $('#post-modal').modal('show');
             })
 
             $('.hearth').click(function (e) {

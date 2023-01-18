@@ -46,6 +46,10 @@
         &.active {
             color: red;
         }
+
+        &.done {
+            color: green;
+        }
     }
 }
 
