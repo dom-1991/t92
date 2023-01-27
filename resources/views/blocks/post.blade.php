@@ -24,6 +24,11 @@
         </div>
     </form>
     <div class="comment">
-        <i class="__date">Plan tháng {{ $post->month }} năm {{ $post->year }}</i>
+        @if($post->comments->count())
+        <b>New comments:</b><br/>
+        @endif
+        @foreach ($post->comments as $comment)
+            <i class="__date">{{ $comment->text }}</i><br/>
+        @endforeach
     </div>
 </div>

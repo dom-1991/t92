@@ -65,7 +65,9 @@ class PostController extends Controller
 
     public function show ($id, Request $request)
     {
-        $post = Post::withCount('reactions')->find($id);
+        $post = Post::withCount('reactions')->with(['comments' => function ($q) {
+            $q->orderByDesc('created_at');
+        }])->find($id);
         if ($post) {
             if($request->ajax()) {
                 $data = [
